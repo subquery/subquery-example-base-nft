@@ -40,8 +40,6 @@ export async function handleDailyAggregation(
 
   aggregation.totalQuantity = aggregation.totalQuantity + quantity;
 
-  logger.info(`New daily aggregation at ${id} with quantity ${quantity}`);
-
   await aggregation.save();
 }
 
