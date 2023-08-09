@@ -42,7 +42,7 @@ dataSources:
       abi: erc721base
       address: "0xea2a41c02fa86a4901826615f9796e603c6a4491" # This is the contract address for Bridge To Base NFT Collection 0xea2a41c02fa86a4901826615f9796e603c6a4491
     assets:
-      erc20:
+      erc721base:
         file: "./abis/erc721base.abi.json"
     mapping:
       file: "./dist/index.js"

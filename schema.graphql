@@ -5,7 +5,7 @@
 type Claim @entity {
   id: ID! # Transaction hash
   blockHeight: BigInt!
-  timestamp: BigInt!
+  timestamp: Date!
   claimer: String!
   receiver: String!
   tokenId: BigInt!

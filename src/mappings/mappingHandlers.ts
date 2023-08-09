@@ -1,22 +1,48 @@
 import { Claim, DailyAggregation } from "../types";
-import {TokensClaimedLog} from "../types/abi-interfaces/Erc721baseAbi";
+import { TokensClaimedLog } from "../types/abi-interfaces/Erc721baseAbi";
 import assert from "assert";
 
 export async function handleNftClaim(log: TokensClaimedLog): Promise<void> {
   logger.info(`New claim log at block ${log.blockNumber}`);
   assert(log.args, "No log.args");
 
+  let date = new Date(Number(log.block.timestamp) * 1000);
+
   const claim = Claim.create({
     id: log.transactionHash,
     blockHeight: BigInt(log.blockNumber),
-    timestamp: log.block.timestamp,
+    timestamp: date,
     claimer: log.args.claimer,
     receiver: log.args.receiver,
     tokenId: log.args.startTokenId.toBigInt(),
     quantity: log.args.quantityClaimed.toBigInt(),
   });
 
+  await handleDailyAggregation(date, claim.quantity);
+
   await claim.save();
+}
+
+export async function handleDailyAggregation(
+  date: Date,
+  quantity: bigint
+): Promise<void> {
+  const id = date.toISOString().slice(0, 10);
+  let aggregation = await DailyAggregation.get(id);
+  logger.info(`New daily aggregation at ${id}`);
+
+  if (!aggregation) {
+    aggregation = DailyAggregation.create({
+      id,
+      totalQuantity: BigInt(0),
+    });
+  }
+
+  aggregation.totalQuantity = aggregation.totalQuantity + quantity;
+
+  logger.info(`New daily aggregation at ${id} with quantity ${quantity}`);
+
+  await aggregation.save();
 }
 
 /*export async function handleTransaction(tx: ApproveTransaction): Promise<void> {
