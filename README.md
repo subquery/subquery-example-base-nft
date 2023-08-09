@@ -2,7 +2,9 @@
 
 [SubQuery](https://subquery.network) is a fast, flexible, and reliable open-source data indexer that provides you with custom APIs for your web3 project across all of our supported networks. To learn about how to get started with SubQuery, [visit our docs](https://academy.subquery.network).
 
-**This SubQuery project indexes all transfers and approval events for the [Wrapped ETH](https://basescan.org/address/0x4200000000000000000000000000000000000006) on Base Mainnet**
+**This SubQuery project indexes all claiming events for the [Bridge to Base NFT](https://basescan.org/token/0xEa2a41c02fA86A4901826615F9796e603C6a4491) on Base Mainnet**
+
+Here is a description from Base team about this NFT collection: *This NFT commemorates you being early — you’re one of the first to teleport into the next generation of the internet as we work to bring billions of people onchain.*
 
 ## Start
 
@@ -39,31 +41,93 @@ You can observe the three services start, and once all are running (it may take 
 For this project, you can try to query with the following GraphQL code to get a taste of how it works.
 
 ```graphql
-{
-  query {
-    transfers(first: 5, orderBy: VALUE_DESC) {
-      totalCount
+query {
+    claims(first: 5) {
       nodes {
         id
         blockHeight
-        from
-        to
-        value
-        contractAddress
+        timestamp
+        claimer
+        receiver
+        tokenId
+        quantity
       }
     }
-  }
-  approvals(first: 5, orderBy: BLOCK_HEIGHT_DESC) {
-    nodes {
+  
+  dailyAggregations(orderBy:TOTAL_QUANTITY_ASC){
+    nodes{
       id
-      blockHeight
-      owner
-      spender
-      value
-      contractAddress
+      totalQuantity
     }
   }
 }
+```
+
+Result:
+
+```json
+{
+  "data": {
+    "claims": {
+      "nodes": [
+        {
+          "id": "0xd91db90047591afbe6ef1c85d2ad0505ee46be161a82fdb79f569194383ed51e",
+          "blockHeight": "2155198",
+          "timestamp": "2023-08-03T21:55:43",
+          "claimer": "0x0bAE5E0BE6CEA98C61591354a5F43339fdD5b611",
+          "receiver": "0x0bAE5E0BE6CEA98C61591354a5F43339fdD5b611",
+          "tokenId": "2313836",
+          "quantity": "1000"
+        },
+        {
+          "id": "0x0114a68ebb4ee609409931a4c62abd2256a66f0fb91388ca00003765186c0e60",
+          "blockHeight": "2155088",
+          "timestamp": "2023-08-03T21:52:03",
+          "claimer": "0x8A17AD3aB5588AE18B0f875dfb65f7AD61D95bDd",
+          "receiver": "0x8A17AD3aB5588AE18B0f875dfb65f7AD61D95bDd",
+          "tokenId": "2312064",
+          "quantity": "1"
+        },
+        {
+          "id": "0x3ccdc484d705776eba946e67e3577c0a629cc82027da6e866717412a158de9e9",
+          "blockHeight": "2155088",
+          "timestamp": "2023-08-03T21:52:03",
+          "claimer": "0x7a2aaecf0c3bF01411f7AAe7DBB97535a7205498",
+          "receiver": "0x7a2aaecf0c3bF01411f7AAe7DBB97535a7205498",
+          "tokenId": "2312054",
+          "quantity": "10"
+        },
+        {
+          "id": "0x1ab0a99382c2ccbed4b64cf1407be214e5d23deff5028a1e4c751d65a1864c04",
+          "blockHeight": "2155087",
+          "timestamp": "2023-08-03T21:52:01",
+          "claimer": "0x51A7b9AFb62dB473107e4a220CedDa67a8025630",
+          "receiver": "0x51A7b9AFb62dB473107e4a220CedDa67a8025630",
+          "tokenId": "2311934",
+          "quantity": "100"
+        },
+        {
+          "id": "0x7cb2474628b4ca6598c008b47dd3956632813b38c6ade08f64dbf59c7d5ad658",
+          "blockHeight": "2155092",
+          "timestamp": "2023-08-03T21:52:11",
+          "claimer": "0x2B4FC7483C42312C3f62feE98671f7407770f16f",
+          "receiver": "0x2B4FC7483C42312C3f62feE98671f7407770f16f",
+          "tokenId": "2312138",
+          "quantity": "1"
+        }
+      ]
+    },
+    "dailyAggregations": {
+      "nodes": [
+        {
+          "id": "2023-08-03",
+          "totalQuantity": "3184"
+        }
+      ]
+    }
+  }
+}
+
 ```
 
 You can explore the different possible queries and entities to help you with GraphQL using the documentation draw on the right.
